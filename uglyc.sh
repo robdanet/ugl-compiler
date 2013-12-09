@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-#       $Id: uglyc.sh,v 1.4 2009/02/04 10:00:58 dvermeir Exp $
+#       $Id: uglyc.sh,v 0.1 Antonio Molinaro Exp $
 #
 #	Usage:	uglyc basename.ug
 #
