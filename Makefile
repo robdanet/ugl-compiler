@@ -1,4 +1,6 @@
-#	$Id: Makefile,v 0 2008/07/10 05:04 09/12/2013 $
+#	Id: Makefile,v 0.2 
+#	Antonio Molinaro 09/12/2013 
+#          inspired from the work of D. Vermeir
 #
 CFLAGS=		-Wall -g
 CC=		gcc
