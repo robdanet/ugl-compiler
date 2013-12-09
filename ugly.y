@@ -1,7 +1,7 @@
 %{
-/* $Id: micro.y,v 1.9 2008/07/11 18:56:43 dvermeir Exp $
+/* $Id: ugly.y,v 0.1 08/12/2013 Antonio Molinaro Exp $
 *
-* Parser specification for Micro
+* Parser specification for ugl-compiler
 */
 #include <stdio.h> /* for (f)printf() */
 #include <stdlib.h> /* for exit() */
