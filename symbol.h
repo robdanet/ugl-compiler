@@ -1,8 +1,8 @@
 #ifndef	SYMBOL_H
 #define	SYMBOL_H
-/* $Id: symbol.h,v 1.1 2008/07/09 13:06:42 dvermeir Exp $
+/* $Id: symbol.h,v 0.1 Antonio Molinaro Exp $
 * 
-* Symbol table management for toy ``Micro'' language compiler.
+* Symbol table management for ugl-compiler.
 */
 extern int symbol_insert(char* name,int type);
 extern void symbol_declare(int i);
