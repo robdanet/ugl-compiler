@@ -1,7 +1,7 @@
 %{
-/* $Id: lex.l,v 1.1 2008/07/09 13:06:42 dvermeir Exp $
+/* $Id: lex.l,v 0.1 Antonio Molinaro Exp $
 * 
-* Lexical analyzer for the toy language ``Micro''
+* Lexical analyzer for ugl-compiler
 */
 #include <string.h> /* for strcmp, strdup & friends */
 #include <stdlib.h> /* for atoi() */
