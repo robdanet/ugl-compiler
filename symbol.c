@@ -1,9 +1,6 @@
-/* $Id: symbol.c,v 1.1 2008/07/09 13:06:42 dvermeir Exp $
+/* $Id: symbol.c,v 0.1 Antonio Molianro Exp $
 * 
-* Symbol table management for toy ``Micro'' language compiler.
-* This is a trivial example: the only information kept
-* is the name, the token type: READ, WRITE or NAME and, for NAMEs
-* whether they have been declared in the JVM code.
+* Symbol table management for toy ugl-compiler.
 */
 #include <stdio.h> /* for (f)printf(), std{out,int} */
 #include <stdlib.h> /* for exit */
@@ -15,8 +12,8 @@
 typedef struct {
   char *name; 
   int type;  /* READ, WRITE, or NAME */
-  int declared; /* NAME only: 1 iff already declared in JVM code, 0 else */
-  int value;/* mio */
+  int declared; /* NAME only */
+  int value;/* mio TODO controllare */
 } ENTRY;
 
 #define  MAX_SYMBOLS 100
