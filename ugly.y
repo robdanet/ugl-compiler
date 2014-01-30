@@ -1,5 +1,5 @@
 %{
-/* $Id: ugly.y,v 0.1 08/12/2013 Antonio Molinaro Exp $
+/*  ugly.y,v 0.1 08/12/2013 Antonio Molinaro 
 *
 * Parser specification for ugl-compiler
 */
@@ -58,7 +58,7 @@ exit:\n\
  
  
  
-%token DECLARE ASSIGN   WHILE THEN FI WRITE IF READ LET
+%token DECLARE WHILE THEN FI WRITE IF READ LET
   
 %token LPAREN RPAREN LBRACE RBRACE COMMA  SEMICOLON
 
@@ -75,6 +75,7 @@ exit:\n\
  
 %left PLUS MINUS
 %left MULT DIV
+%right ASSIGN
 
 %type <idx>   NAME  var
 %type <value> NUMBER  
@@ -107,7 +108,7 @@ statement       : assignment
 		| LBRACE statement  RBRACE                
                 ;
  
-;             
+
 declaration     : DECLARE NAME  
                   { 
                      if (symbol_declared($2)) {
@@ -139,74 +140,43 @@ declaration     : DECLARE NAME
 assignment      : var ASSIGN expression 
                   {
                      
-	            /* we assume that the expresion value is (%esp) */
-                    printf("\tpopl %s\n", symbol_name($1));
-                 //   symbol_setValue($3, $1);  
+	            		/* we assume that the expresion value is (%esp) */
+                		 printf("\tpopl %s\n", symbol_name($1));
+                 		//   symbol_setValue($3, $1);  
                   }
                   
                   ;  
                
                   
 
-read_statement  : READ var {    /* aggiunto 29 9 2013 */
+read_statement  : READ var 
+		{
+		  		 /* aggiunto 29 9 2013 */
  
 				printf("\tpushl $%s \n", symbol_name($2));
 				puts("\tpushl $FRM\n");
 				puts("\tcall scanf\n"); 
 				puts("\taddl $8, %esp\n"); 
  
-			   };
+	         }
+		 ;
 
 write_statement : WRITE expression { puts("\tpushl $FRM1\n\tcall printf\n"); }
-		
-
-               
+            ;
  
-		;
- 
-if_statement :  IF LPAREN expression RPAREN  LBRACE  statement_list  RBRACE    %prec IFX  {    cs++;
-											printf("skip%d:\n",cs);
-											//puts("\tcmpl $0, 20(%ebp)");
-									                //printf("\tjnz skip%d;\n",(cs+1));
-									   		// puts("\tdecl %ecx");
-									    		//printf("\telse:\n");
-									           // puts("\tcmp $0, 20(%ebp)");
-									         //   puts("\tjz next");
-									          //  puts("\tnext:");
-									        //    puts("\tincl 20(%ebp)");
-       										//	 printf("\t jz skip%d\n",
-       										//	 cs+1);
-									    } 
-	    |	IF LPAREN expression RPAREN   LBRACE statement  RBRACE    else_part    { cs++;printf("skip%d:\n",cs);
-									    puts("\tcmpl $0, 20(%ebp)");
-									    printf("\tjnz skip%d;\n",(cs+1));/* aggiunto 14 10 2013 */
-									   // puts("\tdecl %ecx");
-									    printf("\telse:\n");
-	     								    }  
-	     ;
-else_part:  ELSE   LBRACE statement  RBRACE      { cs++;printf("skip%d:\n",cs); }
-	;
+if_statement :  IF LPAREN expression RPAREN  LBRACE  statement_list  RBRACE    %prec IFX  {  }
+									    
+	    |	IF LPAREN expression RPAREN   LBRACE statement  RBRACE    else_part   { } 
+	    ;
+else_part:  ELSE   LBRACE statement  RBRACE      { }
+	    ;
  	
 	
-while_loop_statement :  WHILE LPAREN loop_expression RPAREN   statement    %prec WHFX {  puts("\t pushl %eax");puts("\tjmp start_while");
-									    }
+while_loop_statement :  WHILE LPAREN loop_expression RPAREN   statement    %prec WHFX { }
 	    |	WHILE LPAREN loop_expression RPAREN    statement  end_part    
-	     
-	     ;
-end_part:  END   { puts("end_while:"); }
+	    ;
+end_part:  END   { }
 	;	
-	
-	
-	
-	
-	
-	
-
-
-//while_loop_statement: WHILE  LPAREN loop_expression RPAREN  statement {puts("\t pushl %eax");puts("\tjmp start_while"); 
-//							puts("end_while:"); }
-	
-//	;
 	
  
 	
@@ -231,82 +201,26 @@ expression      : term
 					puts("\tpushl %eax\n");
                 
                  		}
-                 | term GT term {      // puts("movl $0, 20(%ebp)");/* per evitare else quando if e` true */
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					//printf("\tja skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					//puts("\tcmpl %eax, (%esp)");
-					printf("\tja skip%d\n",cs+1);
-					//printf("\tje skip%d\n",cs+1);/* senza questo ( a > a) non unziona */
-					//puts("incl 20(%ebp)#incrementa contatore");/* senza else esegue sempre */
-				}
-							
-		| term EQ term  {	puts("movl $0, 20(%ebp)");
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					printf("\tjne skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					puts("incl 20(%ebp)#incrementa contatore");
-				}
-		| term LT term  {	puts("movl $0, 20(%ebp)");
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					printf("\tjb skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					puts("\tcmpl %eax, (%esp)");
-					printf("\tja skip%d\n",cs+1);
-					printf("\tje skip%d\n",cs+1);/* senza questo ( a < a) non unziona */
-					puts("incl 20(%ebp)#incrementa contatore");
-					
-				}
-		| term NE term	{	puts("movl $0, 20(%ebp)");
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					printf("\tje skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					puts("incl 20(%ebp)#incrementa contatore");/* senza else esegue sempre */
+                | term GT term        
 				
-				}
-		| term GE term {        puts("movl $0, 20(%ebp)");
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					printf("\tjne next\n");//%d\n", cs+1);
-					printf("next:\n");
-					printf("\tja skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					puts("\tcmpl %eax, (%esp)");
-					printf("\tjb skip%d\n",cs+1);
-					puts("incl 20(%ebp)#incrementa contatore");/* senza else esegue sempre */ 
-				}
-		| term LE term  {       puts("movl $0, 20(%ebp)");
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					printf("\tjne next\n");//%d\n", cs+1);
-					printf("next:\n");
-					printf("\tjb skip%d\n", cs+1);/* aggiunto 13-14 10 2013 */
-					puts("\tcmpl %eax, (%esp)");
-					printf("\tja skip%d\n",cs+1);
-					puts("incl 20(%ebp)#incrementa contatore");/* senza else esegue sempre */
-				}
-				 
-		
- ;		
- loop_expression:  term GT term {       puts("\tstart_while:");
- 				        puts("movl $0, 20(%ebp)");/* per evitare else quando if e` true */
-					puts("\tpopl %eax");
-					puts("\tcmpl (%esp), %eax");
-					puts("\tja end_while");/* aggiunto 13-14 10 2013 */
-					puts("\tcmpl %eax, (%esp)");
-					puts("\tjb end_while");
-					puts("\tje end_while");/* senza questo ( a > a) non unziona */
-					puts("incl 20(%ebp)#incrementa contatore");/* senza else esegue sempre */
-				}
-				;
+		| term EQ term  
+				
+		| term LT term  	 
+					
+		| term NE term		 
+				
+		| term GE term          
+				
+		| term LE term     
+				
+		;		
+
 
 
 term            : NUMBER { printf("\tpushl $%d\n", $1); }
                 | var { printf("\tpushl %s\n", symbol_name($1)); }
                 |  LPAREN expression  RPAREN
-              
-                ;
-
-//if_expression: IF LPAREN var GT var RPAREN statement
+ 
 		;
 var             : NAME
                   {
